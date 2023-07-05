@@ -1,52 +1,13 @@
 // import { navigations } from './navigations'
 
-function toTree(navigations) {
-  console.log({ navigations });
-  let result = [];
-  navigations.map((navigation) => {
-    let index = result.findIndex((item) =>
-      navigation.route.startsWith(item.route)
-    );
-    if (index >= 0) {
-      result[index].children ??= [];
-      result[index].children.push(navigation);
-    } else {
-      result.push(navigation);
-    }
-  });
 
-  console.log(result);
-  return result;
-}
 
-export async function load({ url, params }) {
+export async function load({ url, params, parent }) {
   
-  let navigations = [];
-  const files = import.meta.glob("../../../content/**/*.md");
-  console.log(files);
-
-  for (let file in files) {
-    const { default: component, metadata } = await files[file]();
-    const route = '/docs' + file.substring("../../../content".length, file.length - 3);
-    if (route !== "/404") {
-      navigations.push({
-        route,
-        component,
-        metadata: metadata ?? { title: route.split("/").pop() },
-      });
-    }
-  }
-
-  let component;
-      try {
-          component = await import('../../../content/' + params.docs + '.md');
-      }catch(err) {
-          component = await import('../../../content/404.md');
-      }
-
   	let nextItem
 	let prevItem
 
+  const {navigations} = await parent()
   const route = url.pathname
 	navigations.forEach((navigation) => {
 		if (route.startsWith(navigation.route)) {
@@ -74,12 +35,12 @@ export async function load({ url, params }) {
 	})
 
 
+//   console.log('rendering page: ', url, component.default)
 
   return {
-    navigations: toTree(navigations),
-    component: component.default,
     links: {
-
+      nextItem,
+      prevItem
     }
     //
   };
@@ -102,9 +63,9 @@ export async function load({ url, params }) {
 // export async function load({url, params}) {
 //     let component;
 //     try {
-//         component = await import('../../../content/' + params.docs + '.md');
+//         component = await import('../../../' + params.docs + '.md');
 //     }catch(err) {
-//         component = await import('../../../content/404.md');
+//         component = await import('../../../404.md');
 //     }
 
 // 	const route = url.pathname

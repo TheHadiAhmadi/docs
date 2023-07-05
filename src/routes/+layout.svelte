@@ -1,5 +1,5 @@
 <script>
-    import {El} from 'yesvelte'
+    import Layout from '$lib/Layout.svelte';
     import tabler from 'yesvelte/css/tabler.css?url'
     // import ''
 </script>
@@ -9,4 +9,6 @@
 
 </svelte:head>  
 
-<slot/>
+<Layout {...$$props}>
+    <slot/>
+</Layout>

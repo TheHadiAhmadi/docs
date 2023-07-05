@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import examples from 'mdsvexamples';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -20,14 +20,26 @@ const config = {
 				}
 			  ]],
 			  rehypePlugins: [highlight, rehypeAutolinkHeadings],
-			  layout: './src/lib/Layout.svelte'
+			  layout: './src/lib/MarkdownPage.svelte'
 		})
 	],
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
 		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
-		adapter: adapter()
+
+		/**
+		 * @type {import('@sveltejs/adapter-static').AdapterOptions}
+		 */
+		adapter: adapter({
+			// handleHttpError: 'warn',
+			fallback: 'index.html'
+		}),
+		
+		prerender: {
+			handleHttpError: 'warn'
+			
+		}
 	}
 };
 

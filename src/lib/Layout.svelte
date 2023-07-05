@@ -9,27 +9,27 @@
 <script>
   import Logo from "./Logo.svelte";
   import { El, Icon, Button, Select } from "yesvelte";
+  import {browser} from '$app/environment'
 
   import SidebarNavigations from "./SidebarNavigations.svelte";
   import { page } from "$app/stores";
   import ToC from "./ToC.svelte";
 
   export let data;
-  export let title = undefined;
-  export let description = undefined;
-
-  let sections = [];
 
   let dark = false;
   let theme = "daisyui";
   let offcanvasOpen = false;
-
-  $: hasToC = sections.length > 0;
+  
   $: console.log($$props);
   $: pathname = $page.url.pathname;
 
-  $: nextItem = data.links?.nextItem;
-  $: prevItem = data.links?.prevItem;
+  $: if(browser) {
+    document.body.setAttribute('data-theme', dark ? 'dark' : 'light')
+      document.body.setAttribute('data-bs-theme', dark ? 'dark' : 'light')
+  }
+  
+
 </script>
 
 <El mx="auto" style="min-height: calc(100vh - 154px);">
@@ -88,50 +88,7 @@
       </El>
 
       <El container="xl">
-        <El row>
-          <El
-            colSm="12"
-            colMd
-          >
-            <El px="2">
-              {#if title}
-                <El tag="h1" mt="4">{title}</El>
-              {/if}
-              {#if description}
-                <El tag="p">{description}</El>
-              {/if}
-              <slot />
-            </El>
-
-            <El row mt="3" mb="5">
-              {#if prevItem}
-                <El col="auto" tag="a" href={prevItem.href}>
-                  <El class="docs-link" tag="h3" mb="0">
-                    <Icon mb="1" name="chevron-left" />
-                    {prevItem.title}
-                  </El>
-                </El>
-              {/if}
-              {#if nextItem}
-                <El
-                  col="auto"
-                  ms="auto"
-                  justifyContent="end"
-                  tag="a"
-                  href={nextItem.href}
-                >
-                  <El class="docs-link" tag="h3" mb="0">
-                    {nextItem.title}
-                    <Icon mb="1" name="chevron-right" />
-                  </El>
-                </El>
-              {/if}
-            </El>
-          </El>
-          <El colLg="3" d="none" dLg={hasToC ? "inline-block" : "none"}>
-            <ToC bind:sections />
-          </El>
-        </El>
+        <slot />
       </El>
     </El>
   </El>
